@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
+import python_weather
 
 
 app = Flask(__name__)
@@ -7,20 +8,28 @@ app.debug = True
 CORS(app)
 
 
-all_locations = {
-    'new-york': {
-        'temp': -5,
-        'spice': 'Hell hath froze over',
-    },
-    'seattle': {
-        'temp': 65,
-        'spice': "I'd build a summer home here",
-    },
-    'san-antonio': {
-        'temp': 200,
-        'spice': "It's hot as balls",
-    },
-}
+locations = ["new-york", "seattle", "san-antonio"]
+
+
+def getSpice(temp):
+    if temp <= 32:
+        return 'Hell hath frozen over'
+    elif temp > 0 and temp <= 75:
+        return "I'd build a summer home here"
+    elif temp > 75:
+        return "It's hot as balls"
+
+
+async def getweather(city):
+    async with python_weather.Client(format=python_weather.IMPERIAL) as client:
+        weather = await client.get(city)
+        temp = weather.current.temperature
+        res = {
+            'temp': temp,
+            'description': weather.current.description,
+            'spice': getSpice(temp),
+        }
+        return res
 
 
 @app.route('/')
@@ -29,18 +38,13 @@ def index():
 
 
 @app.route('/locations')
-def locations():
+def get_locations():
     return jsonify(data=list(all_locations.keys()))
 
 
 @app.route('/weather/<city>')
-def weather(city):
-    try:
-        return jsonify(data=all_locations[city])
-    except KeyError:
-        return jsonify(data='city_not_found')
-    except:
-        return jsonify(data='internal_server_error')
+async def weather(city):
+    return jsonify(data=await getweather(city))
 
 
 if __name__ == "__main__":
