@@ -14,7 +14,7 @@ locations = ["new-york", "seattle", "san-antonio"]
 def getSpice(temp):
     if temp <= 32:
         return 'Hell hath frozen over'
-    elif temp > 0 and temp <= 75:
+    elif temp > 32 and temp <= 75:
         return "I'd build a summer home here"
     elif temp > 75:
         return "It's hot as balls"
