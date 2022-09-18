@@ -16,7 +16,7 @@ all_locations = {
         'temp': 65,
         'spice': "I'd build a summer home here",
     },
-    'san-antono': {
+    'san-antonio': {
         'temp': 200,
         'spice': "It's hot as balls",
     },
@@ -30,7 +30,6 @@ def index():
 
 @app.route('/locations')
 def locations():
-    print(locations)
     return jsonify(data=list(all_locations.keys()))
 
 
