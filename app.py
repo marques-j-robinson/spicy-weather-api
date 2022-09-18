@@ -12,6 +12,8 @@ locations = ["new-york", "seattle", "san-antonio"]
 
 
 def getSpice(temp):
+    # super windy == "blow me"
+    # smoggy == "the air is poison"
     if temp <= 32:
         return 'Hell hath frozen over'
     elif temp > 32 and temp <= 75:
@@ -25,10 +27,30 @@ async def getweather(city):
         weather = await client.get(city)
         temp = weather.current.temperature
         res = {
-            'temp': temp,
-            'description': weather.current.description,
-            'spice': getSpice(temp),
+            'current': {
+                'temp': temp,
+                'description': weather.current.description,
+                'spice': getSpice(temp),
+            },
+            'forecasts': [],
         }
+        for forecast in weather.forecasts:
+            day = {
+                'date': forecast.date,
+                'moon-phase': str(forecast.astronomy.moon_phase),
+                'sun-rise': str(forecast.astronomy.sun_rise),
+                'sun-set': str(forecast.astronomy.sun_set),
+                'temp': forecast.temperature,
+                'hourly': [],
+            }
+            for hourly in forecast.hourly:
+                hour = {
+                    'time': hourly.time,
+                    'temp': hourly.temperature,
+                    'description': hourly.description,
+                }
+                day['hourly'].append(hour)
+            res['forecasts'].append(day)
         return res
 
 
