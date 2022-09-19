@@ -62,7 +62,7 @@ def index():
 
 @app.route('/locations')
 def get_locations():
-    return jsonify(data=list(all_locations.keys()))
+    return jsonify(data=locations)
 
 
 @app.route('/weather/<location>')
