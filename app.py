@@ -22,11 +22,12 @@ def getSpice(temp):
         return "It's hot as balls"
 
 
-async def getweather(city):
+async def getweather(location):
     async with python_weather.Client(format=python_weather.IMPERIAL) as client:
-        weather = await client.get(city)
+        weather = await client.get(location)
         temp = weather.current.temperature
         res = {
+            'location': location,
             'current': {
                 'temp': temp,
                 'description': weather.current.description,
@@ -64,9 +65,9 @@ def get_locations():
     return jsonify(data=list(all_locations.keys()))
 
 
-@app.route('/weather/<city>')
-async def weather(city):
-    return jsonify(data=await getweather(city))
+@app.route('/weather/<location>')
+async def weather(location):
+    return jsonify(data=await getweather(location))
 
 
 if __name__ == "__main__":
